@@ -1,19 +1,18 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import { StatusBadge } from "@/components/StatusBadge";
 import type { N8nResponse } from "@/lib/types";
 
 type RunStatus = "idle" | "running" | "success" | "error";
 
-const DRIVE_FOLDER_NAME =
-  (process.env.NEXT_PUBLIC_DRIVE_FOLDER_NAME ?? "").trim() || "Carpeta de CVs";
-const DRIVE_FOLDER_URL =
-  (process.env.NEXT_PUBLIC_DRIVE_FOLDER_URL ?? "").trim();
+const DRIVE_FOLDER_CVS =
+  "https://drive.google.com/drive/folders/1Loj266jNNb2rp0zCGu2vBx6VCEZqvEAw?usp=sharing";
+const DRIVE_FOLDER_BORRADORES =
+  "https://drive.google.com/drive/folders/1pvEeSNXBhFrmTVFEHXyA4sjRX-b6ujPS?usp=sharing";
 
 export default function Home() {
   const [status, setStatus] = useState<RunStatus>("idle");
-  const abortRef = useRef<AbortController | null>(null);
 
   const runFlow = useCallback(async () => {
     const token = process.env.NEXT_PUBLIC_RUN_TOKEN;
@@ -22,7 +21,6 @@ export default function Home() {
       return;
     }
 
-    abortRef.current = new AbortController();
     setStatus("running");
 
     try {
@@ -33,7 +31,6 @@ export default function Home() {
           "x-run-token": token,
         },
         body: JSON.stringify({}),
-        signal: abortRef.current.signal,
       });
 
       const data = (await res.json()) as N8nResponse;
@@ -45,20 +42,8 @@ export default function Home() {
       }
 
       setStatus(ok ? "success" : "error");
-    } catch (err) {
-      if (err instanceof Error && err.name === "AbortError") {
-        setStatus("idle");
-      } else {
-        setStatus("error");
-      }
-    } finally {
-      abortRef.current = null;
-    }
-  }, []);
-
-  const stopFlow = useCallback(() => {
-    if (abortRef.current) {
-      abortRef.current.abort();
+    } catch {
+      setStatus("error");
     }
   }, []);
 
@@ -74,24 +59,15 @@ export default function Home() {
       </header>
 
       <section className="mb-6 rounded-2xl border border-pink-200 bg-white p-6 shadow-sm sm:p-8">
-        <div className="mb-6 flex flex-col gap-3 sm:flex-row">
+        <div className="mb-6">
           <button
             type="button"
             onClick={runFlow}
             disabled={status === "running"}
-            className="flex-1 rounded-xl bg-pink-200 py-4 text-xl font-semibold text-gray-800 hover:bg-pink-300 disabled:cursor-not-allowed disabled:opacity-60 sm:py-5"
+            className="w-full rounded-xl bg-pink-200 py-4 text-xl font-semibold text-gray-800 hover:bg-pink-300 disabled:cursor-not-allowed disabled:opacity-60 sm:py-5"
           >
             GENERAR CVs
           </button>
-          {status === "running" && (
-            <button
-              type="button"
-              onClick={stopFlow}
-              className="rounded-xl border-2 border-error-soft bg-white py-4 px-6 text-xl font-semibold text-error-soft-text hover:bg-error-soft sm:py-5"
-            >
-              Detener ejecución
-            </button>
-          )}
         </div>
 
         <div className="mb-4 flex flex-wrap items-center gap-3">
@@ -113,19 +89,24 @@ export default function Home() {
         <p className="text-base text-gray-700">
           📁 Los CVs se guardan automáticamente en Google Drive.
         </p>
-        <p className="mt-1 text-base text-gray-700">
-          Abrí la carpeta: <strong>{DRIVE_FOLDER_NAME}</strong>
-        </p>
-        {DRIVE_FOLDER_URL.trim() !== "" && (
+        <div className="mt-4 flex flex-wrap gap-3">
           <a
-            href={DRIVE_FOLDER_URL}
+            href={DRIVE_FOLDER_CVS}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-4 inline-block rounded-xl bg-pink-200 px-5 py-2.5 text-base font-medium text-gray-800 hover:bg-pink-300"
+            className="inline-block rounded-xl bg-pink-200 px-5 py-2.5 text-base font-medium text-gray-800 hover:bg-pink-300"
           >
-            Abrir carpeta
+            Carpeta de CVs
           </a>
-        )}
+          <a
+            href={DRIVE_FOLDER_BORRADORES}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block rounded-xl bg-pink-200 px-5 py-2.5 text-base font-medium text-gray-800 hover:bg-pink-300"
+          >
+            Carpeta de borradores
+          </a>
+        </div>
       </section>
     </main>
   );
