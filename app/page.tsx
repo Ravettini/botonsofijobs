@@ -5,6 +5,7 @@ import { StatusBadge } from "@/components/StatusBadge";
 import type { N8nResponse } from "@/lib/types";
 
 type RunStatus = "idle" | "running" | "success" | "error";
+type WakeStatus = "idle" | "waking" | "awake" | "wakeError";
 
 const DRIVE_FOLDER_CVS =
   "https://drive.google.com/drive/folders/17G1rd3MBRIxgtzpSO1Z7yR3eW9UCEQ3R?usp=sharing";
@@ -13,7 +14,22 @@ const DRIVE_FOLDER_BORRADORES =
 
 export default function Home() {
   const [status, setStatus] = useState<RunStatus>("idle");
+  const [wakeStatus, setWakeStatus] = useState<WakeStatus>("idle");
   const [modalOpen, setModalOpen] = useState(false);
+
+  const wakeRender = useCallback(async () => {
+    setWakeStatus("waking");
+    try {
+      const res = await fetch("/api/wake-render", { method: "GET" });
+      if (res.ok) {
+        setWakeStatus("awake");
+      } else {
+        setWakeStatus("wakeError");
+      }
+    } catch {
+      setWakeStatus("wakeError");
+    }
+  }, []);
 
   const runFlow = useCallback(async () => {
     const token = process.env.NEXT_PUBLIC_RUN_TOKEN;
@@ -72,6 +88,28 @@ export default function Home() {
             Únicamente procesa los datos completados directamente en los campos del formulario.
           </p>
         </div>
+
+        <div className="mb-4 flex flex-col gap-3">
+          <button
+            type="button"
+            onClick={wakeRender}
+            disabled={wakeStatus === "waking"}
+            className="w-full rounded-xl border-2 border-amber-400 bg-amber-50 py-3 text-base font-semibold text-amber-800 hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {wakeStatus === "waking" ? "Despertando Render… (puede tardar hasta 1 min)" : "Despertar Render"}
+          </button>
+          {wakeStatus === "awake" && (
+            <p className="rounded-xl bg-green-100 py-2 text-center text-sm font-medium text-green-800">
+              ✓ Listo. Ya podés generar los CVs.
+            </p>
+          )}
+          {wakeStatus === "wakeError" && (
+            <p className="rounded-xl bg-red-100 py-2 text-center text-sm font-medium text-red-800">
+              No se pudo despertar. Reintentá en un momento.
+            </p>
+          )}
+        </div>
+
         <div className="mb-4">
           <button
             type="button"
