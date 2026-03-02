@@ -30,9 +30,5 @@ export function StatusBadge({ status }: StatusBadgeProps) {
     );
   }
 
-  return (
-    <span className="inline-flex items-center rounded-full bg-error-soft px-4 py-1.5 text-base font-medium text-error-soft-text">
-      Hubo un problema. Reintentá
-    </span>
-  );
+  return null;
 }
