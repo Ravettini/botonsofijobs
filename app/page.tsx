@@ -54,11 +54,23 @@ export default function Home() {
           Generador de CVs
         </h1>
         <p className="mt-2 text-lg text-gray-600">
-          Generá los CVs y revisalos en la carpeta compartida.
+          ¡Hola! Que tengas un lindo día de trabajo.
+          <br />
+          Hacé click y generá los Cvs del día de hoy.
+          <br />
+          No olvides de revisar la carpeta compartida.
         </p>
       </header>
 
       <section className="mb-6 rounded-2xl border border-pink-200 bg-white p-6 shadow-sm sm:p-8">
+        <div className="mb-4 rounded-xl border-2 border-red-400 bg-red-50 p-4 text-red-800">
+          <p className="font-semibold">Importante:</p>
+          <p className="mt-1 text-sm">
+            El sistema no incorpora las modificaciones que el cliente realice en el formulario después de generado el primer borrador.
+            Tampoco considera la información adjunta en archivos externos (por ejemplo, documentos Word).
+            Únicamente procesa los datos completados directamente en los campos del formulario.
+          </p>
+        </div>
         <div className="mb-4">
           <button
             type="button"
@@ -69,7 +81,7 @@ export default function Home() {
             GENERAR CVs
           </button>
           <p className="mt-3 text-center text-sm font-medium text-gray-600">
-            Una vez ejecutado, no va a parar hasta que procese el último CV.
+            Una vez iniciado, el sistema no finaliza hasta procesar el último CV que se haya cargado en el forms.
           </p>
         </div>
 
@@ -91,6 +103,9 @@ export default function Home() {
       <section className="mb-6 rounded-2xl border border-pink-200 bg-white p-6 shadow-sm sm:p-8">
         <p className="text-base text-gray-700">
           📁 Los CVs se guardan automáticamente en Google Drive.
+          <br />
+          <span className="mt-2 block">Carpeta de Cvs: corresponde al documento final</span>
+          <span className="block">Carpeta de borradores: corresponde al mismo documento pero con marca de agua.</span>
         </p>
         <div className="mt-4 flex flex-wrap gap-3">
           <a
@@ -117,15 +132,10 @@ export default function Home() {
           ¿Qué es esto?
         </h2>
         <p className="mt-4 text-base leading-relaxed text-gray-700">
-          Al hacer clic en Generar CVs, el sistema iniciará un proceso automático
-          que revisa la planilla y detecta todos los registros que aún no fueron
-          procesados. Para cada uno, toma la información cargada (datos
-          personales, experiencia, estudios, habilidades y foto), la estructura
-          según la plantilla definida y genera el currículum en formato PDF e
-          imagen. Luego, los archivos se guardan automáticamente en Google Drive
-          y el registro queda marcado como procesado para evitar duplicaciones.
-          Una vez iniciado, el proceso se ejecuta de manera continua hasta
-          completar el último CV pendiente.
+          Al hacer clic en &quot;Generar CVs&quot;, el sistema activa un proceso automático que revisa la planilla y detecta todos los registros que aún no fueron procesados.
+          Para cada registro, toma la información cargada (datos personales, experiencia, estudios, habilidades y foto), la organiza según la plantilla definida y genera dos currículums en formato PDF e imagen.
+          Una vez creado, el archivo se guarda automáticamente en Google Drive y el registro queda marcado como procesado, evitando duplicaciones.
+          El proceso se ejecuta de forma continua hasta completar todos los CVs pendientes.
         </p>
       </section>
     </main>
