@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #ffffff;
+  --bg-soft: #fff1f7;
+  --pink-50: #fff1f7;
+  --pink-100: #ffe4f1;
+  --pink-200: #ffcfe6;
+  --pink-400: #ff7ab6;
+  --foreground: #1f2937;
+  --foreground-muted: #6b7280;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--bg-soft);
+}
+
+/* Syntax highlight para JSON (panel técnico) */
+pre.json-view {
+  font-family: ui-monospace, monospace;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  overflow-x: auto;
+}
