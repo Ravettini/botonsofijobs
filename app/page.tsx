@@ -7,12 +7,13 @@ import type { N8nResponse } from "@/lib/types";
 type RunStatus = "idle" | "running" | "success" | "error";
 
 const DRIVE_FOLDER_CVS =
-  "https://drive.google.com/drive/folders/1Loj266jNNb2rp0zCGu2vBx6VCEZqvEAw?usp=sharing";
+  "https://drive.google.com/drive/folders/17G1rd3MBRIxgtzpSO1Z7yR3eW9UCEQ3R?usp=sharing";
 const DRIVE_FOLDER_BORRADORES =
-  "https://drive.google.com/drive/folders/1pvEeSNXBhFrmTVFEHXyA4sjRX-b6ujPS?usp=sharing";
+  "https://drive.google.com/drive/folders/1D-1nDl6rDxGc-80DeIyKCo1xqrfoP3O1?usp=sharing";
 
 export default function Home() {
   const [status, setStatus] = useState<RunStatus>("idle");
+  const [modalOpen, setModalOpen] = useState(false);
 
   const runFlow = useCallback(async () => {
     const token = process.env.NEXT_PUBLIC_RUN_TOKEN;
@@ -98,7 +99,52 @@ export default function Home() {
             Reintentar
           </button>
         )}
+
+        <button
+          type="button"
+          onClick={() => setModalOpen(true)}
+          className="mt-4 w-full rounded-xl border border-pink-200 py-2.5 text-base font-medium text-pink-700 hover:bg-pink-50"
+        >
+          ¿Qué es esto?
+        </button>
       </section>
+
+      {modalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          onClick={() => setModalOpen(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modal-title"
+        >
+          <div
+            className="max-h-[85vh] max-w-lg overflow-y-auto rounded-2xl border border-pink-200 bg-white p-6 shadow-xl sm:p-8"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between gap-4">
+              <h2 id="modal-title" className="text-xl font-bold text-gray-800 sm:text-2xl">
+                ¿Qué es esto?
+              </h2>
+              <button
+                type="button"
+                onClick={() => setModalOpen(false)}
+                className="rounded-lg p-1 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                aria-label="Cerrar"
+              >
+                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <p className="mt-4 text-base leading-relaxed text-gray-700">
+              Al hacer clic en &quot;Generar CVs&quot;, el sistema activa un proceso automático que revisa la planilla y detecta todos los registros que aún no fueron procesados.
+              Para cada registro, toma la información cargada (datos personales, experiencia, estudios, habilidades y foto), la organiza según la plantilla definida y genera dos currículums en formato PDF e imagen.
+              Una vez creado, el archivo se guarda automáticamente en Google Drive y el registro queda marcado como procesado, evitando duplicaciones.
+              El proceso se ejecuta de forma continua hasta completar todos los CVs pendientes.
+            </p>
+          </div>
+        </div>
+      )}
 
       <section className="mb-6 rounded-2xl border border-pink-200 bg-white p-6 shadow-sm sm:p-8">
         <p className="text-base text-gray-700">
@@ -125,18 +171,6 @@ export default function Home() {
             Carpeta de borradores
           </a>
         </div>
-      </section>
-
-      <section className="rounded-2xl border border-pink-200 bg-white p-6 shadow-sm sm:p-8">
-        <h2 className="text-xl font-bold text-gray-800 sm:text-2xl">
-          ¿Qué es esto?
-        </h2>
-        <p className="mt-4 text-base leading-relaxed text-gray-700">
-          Al hacer clic en &quot;Generar CVs&quot;, el sistema activa un proceso automático que revisa la planilla y detecta todos los registros que aún no fueron procesados.
-          Para cada registro, toma la información cargada (datos personales, experiencia, estudios, habilidades y foto), la organiza según la plantilla definida y genera dos currículums en formato PDF e imagen.
-          Una vez creado, el archivo se guarda automáticamente en Google Drive y el registro queda marcado como procesado, evitando duplicaciones.
-          El proceso se ejecuta de forma continua hasta completar todos los CVs pendientes.
-        </p>
       </section>
     </main>
   );
