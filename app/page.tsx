@@ -88,7 +88,7 @@ export default function Home() {
         )}
       </section>
 
-      <section className="rounded-2xl border border-pink-200 bg-white p-6 shadow-sm sm:p-8">
+      <section className="mb-6 rounded-2xl border border-pink-200 bg-white p-6 shadow-sm sm:p-8">
         <p className="text-base text-gray-700">
           📁 Los CVs se guardan automáticamente en Google Drive.
         </p>
@@ -110,6 +110,23 @@ export default function Home() {
             Carpeta de borradores
           </a>
         </div>
+      </section>
+
+      <section className="rounded-2xl border border-pink-200 bg-white p-6 shadow-sm sm:p-8">
+        <h2 className="text-xl font-bold text-gray-800 sm:text-2xl">
+          ¿Qué es esto?
+        </h2>
+        <p className="mt-4 text-base leading-relaxed text-gray-700">
+          Al hacer clic en Generar CVs, el sistema iniciará un proceso automático
+          que revisa la planilla y detecta todos los registros que aún no fueron
+          procesados. Para cada uno, toma la información cargada (datos
+          personales, experiencia, estudios, habilidades y foto), la estructura
+          según la plantilla definida y genera el currículum en formato PDF e
+          imagen. Luego, los archivos se guardan automáticamente en Google Drive
+          y el registro queda marcado como procesado para evitar duplicaciones.
+          Una vez iniciado, el proceso se ejecuta de manera continua hasta
+          completar el último CV pendiente.
+        </p>
       </section>
     </main>
   );
