@@ -59,13 +59,13 @@ export default function Home() {
           <br />
           Hacé click y generá los Cvs del día de hoy.
           <br />
-          No olvides de revisar la carpeta compartida.
+          No olvides revisar la carpeta compartida.
         </p>
       </header>
 
       <section className="mb-6 rounded-2xl border border-pink-200 bg-white p-6 shadow-sm sm:p-8">
-        <div className="mb-4 rounded-xl border-2 border-red-400 bg-red-50 p-4 text-red-800">
-          <p className="font-semibold">Importante:</p>
+        <div className="mb-4 rounded-xl border-2 border-gray-700 bg-gray-100 p-4 text-gray-800">
+          <p className="font-semibold">⚠️ Importante:</p>
           <p className="mt-1 text-sm">
             El sistema no incorpora las modificaciones que el cliente realice en el formulario después de generado el primer borrador.
             Tampoco considera la información adjunta en archivos externos (por ejemplo, documentos Word).
