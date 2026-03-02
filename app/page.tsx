@@ -59,7 +59,7 @@ export default function Home() {
       </header>
 
       <section className="mb-6 rounded-2xl border border-pink-200 bg-white p-6 shadow-sm sm:p-8">
-        <div className="mb-6">
+        <div className="mb-4">
           <button
             type="button"
             onClick={runFlow}
@@ -68,6 +68,9 @@ export default function Home() {
           >
             GENERAR CVs
           </button>
+          <p className="mt-3 text-center text-sm font-medium text-gray-600">
+            Una vez ejecutado, no va a parar hasta que procese el último CV.
+          </p>
         </div>
 
         <div className="mb-4 flex flex-wrap items-center gap-3">
