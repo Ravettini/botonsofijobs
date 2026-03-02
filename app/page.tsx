@@ -96,7 +96,7 @@ export default function Home() {
             disabled={wakeStatus === "waking"}
             className="w-full rounded-xl border-2 border-amber-400 bg-amber-50 py-3 text-base font-semibold text-amber-800 hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {wakeStatus === "waking" ? "Despertando Render… (puede tardar hasta 1 min)" : "Despertar Render"}
+            {wakeStatus === "waking" ? "Despertando sistema… (puede tardar hasta 1 min)" : "Despertar Sistema"}
           </button>
           {wakeStatus === "awake" && (
             <p className="rounded-xl bg-green-100 py-2 text-center text-sm font-medium text-green-800">
@@ -105,7 +105,7 @@ export default function Home() {
           )}
           {wakeStatus === "wakeError" && (
             <p className="rounded-xl bg-red-100 py-2 text-center text-sm font-medium text-red-800">
-              No se pudo despertar. Reintentá en un momento.
+              No se pudo despertar el sistema. Reintentá en un momento.
             </p>
           )}
         </div>
