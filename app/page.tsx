@@ -122,6 +122,9 @@ export default function Home() {
           <p className="mt-3 text-center text-sm font-medium text-gray-600">
             Una vez iniciado, el sistema no finaliza hasta procesar el último CV que se haya cargado en el forms.
           </p>
+          <p className="mt-3 rounded-xl border-2 border-red-400 bg-red-50 px-4 py-2 text-center text-sm font-medium text-red-800">
+            Por favor chequeá que no se estén generando más CVs antes de volver a apretar el botón. Esperá 10 minutos para volver a generar CVs nuevos.
+          </p>
         </div>
 
         <div className="mb-4 flex flex-wrap items-center gap-3">
