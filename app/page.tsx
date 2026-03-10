@@ -5,7 +5,6 @@ import { StatusBadge } from "@/components/StatusBadge";
 import type { N8nResponse } from "@/lib/types";
 
 type RunStatus = "idle" | "running" | "success" | "error";
-type WakeStatus = "idle" | "waking" | "awake" | "wakeError";
 
 const DRIVE_FOLDER_CVS =
   "https://drive.google.com/drive/folders/17G1rd3MBRIxgtzpSO1Z7yR3eW9UCEQ3R?usp=sharing";
@@ -14,33 +13,32 @@ const DRIVE_FOLDER_BORRADORES =
 
 export default function Home() {
   const [status, setStatus] = useState<RunStatus>("idle");
-  const [wakeStatus, setWakeStatus] = useState<WakeStatus>("idle");
+  const [phase, setPhase] = useState<"waking" | "generating">("generating");
+  const [wakeError, setWakeError] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-
-  const wakeRender = useCallback(async () => {
-    setWakeStatus("waking");
-    try {
-      const res = await fetch("/api/wake-render", { method: "GET" });
-      if (res.ok) {
-        setWakeStatus("awake");
-      } else {
-        setWakeStatus("wakeError");
-      }
-    } catch {
-      setWakeStatus("wakeError");
-    }
-  }, []);
 
   const runFlow = useCallback(async () => {
     const token = process.env.NEXT_PUBLIC_RUN_TOKEN;
     if (!token) {
       setStatus("error");
+      setWakeError(false);
       return;
     }
 
     setStatus("running");
+    setWakeError(false);
+    setPhase("waking");
 
     try {
+      const wakeRes = await fetch("/api/wake-render", { method: "GET" });
+      if (!wakeRes.ok) {
+        setStatus("error");
+        setWakeError(true);
+        return;
+      }
+
+      setPhase("generating");
+
       const res = await fetch("/api/run", {
         method: "POST",
         headers: {
@@ -55,12 +53,15 @@ export default function Home() {
 
       if (!res.ok) {
         setStatus("error");
+        setWakeError(false);
         return;
       }
 
       setStatus(ok ? "success" : "error");
+      setWakeError(false);
     } catch {
       setStatus("error");
+      setWakeError(false);
     }
   }, []);
 
@@ -89,26 +90,9 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="mb-4 flex flex-col gap-3">
-          <button
-            type="button"
-            onClick={wakeRender}
-            disabled={wakeStatus === "waking"}
-            className="w-full rounded-xl border-2 border-amber-400 bg-amber-50 py-3 text-base font-semibold text-amber-800 hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {wakeStatus === "waking" ? "Despertando sistema… (puede tardar hasta 1 min)" : "Despertar Sistema"}
-          </button>
-          {wakeStatus === "awake" && (
-            <p className="rounded-xl bg-green-100 py-2 text-center text-sm font-medium text-green-800">
-              ✓ Listo. Ya podés generar los CVs.
-            </p>
-          )}
-          {wakeStatus === "wakeError" && (
-            <p className="rounded-xl bg-red-100 py-2 text-center text-sm font-medium text-red-800">
-              No se pudo despertar el sistema. Reintentá en un momento.
-            </p>
-          )}
-        </div>
+        <p className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-2 text-center text-sm text-amber-900">
+          El despertar del sistema está integrado en el botón &quot;Generar CVs&quot;: al hacer clic, primero se despierta el sistema y luego se generan los CVs.
+        </p>
 
         <div className="mb-4">
           <button
@@ -128,8 +112,14 @@ export default function Home() {
         </div>
 
         <div className="mb-4 flex flex-wrap items-center gap-3">
-          <StatusBadge status={status} />
+          <StatusBadge status={status} phase={status === "running" ? phase : undefined} />
         </div>
+
+        {status === "error" && wakeError && (
+          <p className="mb-4 rounded-xl bg-red-100 py-2 text-center text-sm font-medium text-red-800">
+            No se pudo despertar el sistema. Reintentá en un momento.
+          </p>
+        )}
 
         <button
           type="button"
