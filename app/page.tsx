@@ -1,10 +1,11 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { StatusBadge } from "@/components/StatusBadge";
 import type { N8nResponse } from "@/lib/types";
 
 type RunStatus = "idle" | "running" | "success" | "error";
+type RenderStatus = "checking" | "awake" | "asleep";
 
 const DRIVE_FOLDER_CVS =
   "https://drive.google.com/drive/folders/17G1rd3MBRIxgtzpSO1Z7yR3eW9UCEQ3R?usp=sharing";
@@ -16,6 +17,23 @@ export default function Home() {
   const [phase, setPhase] = useState<"waking" | "generating">("generating");
   const [wakeError, setWakeError] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [renderStatus, setRenderStatus] = useState<RenderStatus>("checking");
+
+  const checkRenderStatus = useCallback(() => {
+    setRenderStatus("checking");
+    fetch("/api/render-status", { method: "GET" })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.status === "awake" || data?.status === "asleep") {
+          setRenderStatus(data.status);
+        }
+      })
+      .catch(() => setRenderStatus("asleep"));
+  }, []);
+
+  useEffect(() => {
+    checkRenderStatus();
+  }, [checkRenderStatus]);
 
   const runFlow = useCallback(async () => {
     const token = process.env.NEXT_PUBLIC_RUN_TOKEN;
@@ -37,6 +55,7 @@ export default function Home() {
         return;
       }
 
+      setRenderStatus("awake");
       setPhase("generating");
 
       const res = await fetch("/api/run", {
@@ -81,6 +100,39 @@ export default function Home() {
       </header>
 
       <section className="mb-6 rounded-2xl border border-pink-200 bg-white p-6 shadow-sm sm:p-8">
+        <div className="mb-4 flex flex-wrap items-center justify-end gap-2">
+          {renderStatus === "checking" && (
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-gray-200 px-3 py-1 text-sm font-medium text-gray-700">
+              <span className="h-2 w-2 animate-pulse rounded-full bg-gray-500" />
+              Comprobando…
+            </span>
+          )}
+          {renderStatus === "awake" && (
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-800">
+              <span className="h-2 w-2 rounded-full bg-green-500" />
+              Despierto
+            </span>
+          )}
+          {renderStatus === "asleep" && (
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-red-100 px-3 py-1 text-sm font-medium text-red-800">
+              <span className="h-2 w-2 rounded-full bg-red-500" />
+              Dormido
+            </span>
+          )}
+          <button
+            type="button"
+            onClick={checkRenderStatus}
+            disabled={renderStatus === "checking"}
+            className="rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-700 disabled:opacity-50"
+            title="Actualizar estado del sistema"
+            aria-label="Actualizar estado del sistema"
+          >
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+          </button>
+        </div>
+
         <div className="mb-4 rounded-xl border-2 border-gray-700 bg-gray-100 p-4 text-gray-800">
           <p className="font-semibold">⚠️ Importante:</p>
           <p className="mt-1 text-sm">
